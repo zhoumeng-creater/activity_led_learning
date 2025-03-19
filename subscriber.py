@@ -4,7 +4,8 @@ import json
 
 BROKER = "lbe50b88.ala.cn-hangzhou.emqxsl.cn"  # Broker address
 PORT = 8883  # Port
-TOPIC = "vehicle/gps"  # Topic to subscribe
+vehicle_id = "vehicle01"
+TOPIC = f"vehicle/{vehicle_id}/data/gps"    # Topic to subscribe(统一topic格式)
 CLIENT_ID = "subscriber_01"  # Client ID to distinguish clients
 USERNAME = "admin"  # Username
 PASSWORD = "public"  # Password
