@@ -26,7 +26,7 @@ BROKER_PORT = 8883
 BROKER_USERNAME = "admin"
 BROKER_PASSWORD = "public"
 
-USE_TLS = True
+USE_TLS = False
 CA_CERTS_PATH = "ca.crt"
 
 VEHICLE_DATA_TOPIC = "vehicle/+/data/#"
