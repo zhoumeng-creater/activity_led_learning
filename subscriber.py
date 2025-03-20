@@ -1,54 +1,48 @@
 import paho.mqtt.client as mqtt
 import json
+import time
 
-BROKER = "broker.hivemq.com"  # Broker address
-PORT = 1883  # Port
+BROKER = "broker.hivemq.com"
+PORT = 1883
 vehicle_id = "vehicle01"
-TOPIC = f"vehicle/{vehicle_id}/data/gps"    # Topic to subscribe(统一topic格式)
-CLIENT_ID = "subscriber_01"  # Client ID to distinguish clients
-USERNAME = False  # Username
-PASSWORD = False  # Password
+TOPIC = f"server/alert/{vehicle_id}"
+CLIENT_ID = "subscriber_alert_01"
 
 # Connection callback function
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
-        print(f"Connected successfully, return code: {rc}")
-        # Subscribe to topic
+        print(f"Connected successfully to topic '{TOPIC}', return code: {rc}")
         client.subscribe(TOPIC)
     else:
         print(f"Connection failed, return code: {rc}")
-        # Handle connection failure, e.g., retry
 
 # Message callback function
 def on_message(client, userdata, msg):
-    print(f"Received message: {msg.payload.decode()}")
-    visualize_message(msg.payload.decode())
+    print(f"\n[ALERT RECEIVED at {time.strftime('%Y-%m-%d %H:%M:%S')}]")
+    process_alert_message(msg.payload.decode())
 
-# Function to visualize messages
-def visualize_message(message):
+# Function to process and visualize alert messages
+def process_alert_message(message):
     try:
-        message_dict = json.loads(message)
-        print("Visualization result:")
-        for key, value in message_dict.items():
-            print(f"{key}: {value}")
+        alert = json.loads(message)
+        alert_type = alert.get('alert_type', 'Unknown')
+        value = alert.get('value', 'N/A')
+        timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(alert.get('timestamp', time.time())))
+        
+        print(f"Alert Type   : {alert_type}")
+        print(f"Value        : {value}")
+        print(f"Alert Time   : {timestamp}")
+
     except json.JSONDecodeError:
-        print(f"Message content: {message}")
+        print(f"Received non-JSON message: {message}")
 
 # Main program
 def main():
-    client = mqtt.Client(
-        client_id=CLIENT_ID,
-        callback_api_version=mqtt.CallbackAPIVersion.VERSION1)
+    client = mqtt.Client(client_id=CLIENT_ID, callback_api_version=mqtt.CallbackAPIVersion.VERSION1)
 
-    # Set username and password
-    if USERNAME and PASSWORD:
-        client.username_pw_set(USERNAME, PASSWORD)
-
-    # Set connection and message callbacks
     client.on_connect = on_connect
     client.on_message = on_message
 
-    # Connect to Broker
     print("Connecting to Broker...")
     try:
         client.connect(BROKER, PORT, 60)
@@ -56,8 +50,7 @@ def main():
         print(f"Connection failed, error: {e}")
         return
 
-    # Start network loop to receive messages
-    print("Waiting for messages...")
+    print("Waiting for alert messages...")
     try:
         client.loop_forever()
     except KeyboardInterrupt:
@@ -70,4 +63,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
