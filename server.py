@@ -21,10 +21,10 @@ import paho.mqtt.client as mqtt
 import ssl
 
 # MQTT Broker 云端配置
-BROKER_HOST = "lbe50b88.ala.cn-hangzhou.emqxsl.cn"
-BROKER_PORT = 8883
-BROKER_USERNAME = "admin"
-BROKER_PASSWORD = "public"
+BROKER_HOST = "broker.hivemq.com"
+BROKER_PORT = 1883
+BROKER_USERNAME = False
+BROKER_PASSWORD = False
 
 USE_TLS = False
 CA_CERTS_PATH = "ca.crt"
@@ -99,7 +99,9 @@ def handle_user_command(client, topic, payload):
 
 def main():
     """主程序入口，连接云端Broker，启用TLS/SSL及认证"""
-    client = mqtt.Client(SERVER_CLIENT_ID)
+    client = mqtt.Client(
+        client_id=SERVER_CLIENT_ID,         
+        callback_api_version=mqtt.CallbackAPIVersion.VERSION1)             # 修复回调函数参数问题
 
     if BROKER_USERNAME and BROKER_PASSWORD:
         client.username_pw_set(BROKER_USERNAME, BROKER_PASSWORD)

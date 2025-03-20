@@ -4,8 +4,8 @@ import json
 import random
 
 # MQTT Broker configuration
-BROKER = "lbe50b88.ala.cn-hangzhou.emqxsl.cn"  # Broker address
-PORT = 8883  # Port
+BROKER = "broker.hivemq.com"  # Broker address
+PORT = 1883  # Port
 vehicle_id = "vehicle01"
 TOPIC = f"vehicle/{vehicle_id}/data/gps"  # Topic to publish（统一topic格式）
 CLIENT_ID = "publisher_01"  # Client ID to distinguish clients
@@ -22,7 +22,7 @@ longitude = 114.057865
 mqtt_client = mqtt.Client(client_id=CLIENT_ID)
 
 # Set username and password
-mqtt_client.username_pw_set(USERNAME, PASSWORD)
+# mqtt_client.username_pw_set(USERNAME, PASSWORD)
 
 # Connect to Broker
 print("Connecting to Broker...")

@@ -1,14 +1,13 @@
-
 import paho.mqtt.client as mqtt
 import json
 
-BROKER = "lbe50b88.ala.cn-hangzhou.emqxsl.cn"  # Broker address
-PORT = 8883  # Port
+BROKER = "broker.hivemq.com"  # Broker address
+PORT = 1883  # Port
 vehicle_id = "vehicle01"
 TOPIC = f"vehicle/{vehicle_id}/data/gps"    # Topic to subscribe(统一topic格式)
 CLIENT_ID = "subscriber_01"  # Client ID to distinguish clients
-USERNAME = "admin"  # Username
-PASSWORD = "public"  # Password
+USERNAME = False  # Username
+PASSWORD = False  # Password
 
 # Connection callback function
 def on_connect(client, userdata, flags, rc):
@@ -37,10 +36,13 @@ def visualize_message(message):
 
 # Main program
 def main():
-    client = mqtt.Client(client_id=CLIENT_ID)
+    client = mqtt.Client(
+        client_id=CLIENT_ID,
+        callback_api_version=mqtt.CallbackAPIVersion.VERSION1)
 
     # Set username and password
-    client.username_pw_set(USERNAME, PASSWORD)
+    if USERNAME and PASSWORD:
+        client.username_pw_set(USERNAME, PASSWORD)
 
     # Set connection and message callbacks
     client.on_connect = on_connect
